@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<!-- set the encoding of your site -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- set the page title -->
+	<title>Sammlung Müller | Metadata</title>
+	<!-- inlcude google archivo & lora font cdn link -->
+	<link rel="stylesheet" href="assets/fonts/fonts.css">
+	<!-- include the site bootstrap stylesheet -->
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
+	<!-- include the site stylesheet -->
+	<link rel="stylesheet" href="assets/style.css">
+	<!-- include the site responsive stylesheet -->
+	<link rel="stylesheet" href="assets/css/responsive.css">
+    <!-- include the rtl version stylesheet -->
+    <link rel="stylesheet" href="assets/css/rtl.css" />
+	<!-- manage includes -->
+	<script src="/assets/js/includes.js"></script>
+	<link rel="icon" type="image/png" href="/assets/images/favicon/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg" />
+	<link rel="shortcut icon" href="/assets/images/favicon/favicon.ico" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
+	<link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
+</head>
+<body class="hClassViii">
+	<!-- pageWrapper -->
+	<div id="pageWrapper" class="ltr">
+		<div id="header"></div>
+		<main id="main">
+            <!-- artworkContentBlock -->
+			<section class="artworkContentBlock pt-8 pt-lg-12 pb-10 pb-lg-14 pb-xl-22">
+				
+				<div class="container">
+					<div class="px-xl-6">
+						<div class="row">
+							<div class="col-12 col-md-10 offset-md-1 col-xl-8 offset-xl-2">
+								<h2 class="mb-1", id="title"></h2>
+								<strong class="d-block acbSubtitle font-weight-normal text-gray777", id="artist_title"></strong>
+								<hr class="mt-5 mt-md-8 mb-4">
+								<p class="mb-7" id="description"></p>
+								<!-- apDataTable -->
+								<table class="apDataTable apDataTableII text-gray777 w-100 mt-5 mb-9 mb-lg-14">
+									<tbody>
+										<tr>
+											<td class="text-secondary">Inventarnummer</td>
+											<td id="inventory_number"></td>
+										</tr>
+										<tr>
+											<td class="text-secondary">Künstler/in</td>
+											<td id="artist_table"></td>
+										</tr>
+										<tr>
+											<td class="text-secondary">Objektart</td>
+											<td id="type_of_object"></td>
+										</tr>
+										<tr>
+											<td class="text-secondary">Material / Technik</td>
+											<td id="material_technique"></td>
+										</tr>
+										<tr>
+											<td class="text-secondary">Maße</td>
+											<td id="dimensions"></td>
+										</tr>
+										<tr>
+											<td class="text-secondary">Persistent Identifier</td>
+											<td id="pid"></td>
+										</tr>
+										
+									</tbody>
+								</table>
+								<!-- vtcAccordion -->
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+        </main>
+		<div id="footer"></div>
+
+	<!-- include jQuery library -->
+	<script src="assets/js/jquery-3.4.1.min.js"></script>
+	<!-- include bootstrap popper JavaScript -->
+	<script src="assets/js/popper.min.js"></script>
+	<!-- include bootstrap JavaScript -->
+	<script src="assets/js/bootstrap.min.js"></script>
+	<!-- include custom JavaScript -->
+	<script src="assets/js/jqueryCustom.js"></script>
+	<!-- include fontawesome kit -->
+	<script>
+		// Helper function to get URL parameters
+		function getQueryParam(param) {
+		  const urlParams = new URLSearchParams(window.location.search);
+		  return urlParams.get(param);
+		}
+	
+		// Fetch artworks data from external JSON file
+		async function loadArtwork() {
+		  try {
+			const response = await fetch('/assets/data/artworks.json');
+			if (!response.ok) {
+			  throw new Error('Failed to load artworks.json');
+			}
+			const artworks = await response.json();
+			displayArtwork(artworks);
+		  } catch (error) {
+			document.getElementById('artwork-container').innerHTML = `<p>Error loading data: ${error.message}</p>`;
+		  }
+		}
+	
+		// Display artwork by id_number
+		function displayArtwork(artworks) {
+		  const idNumber = getQueryParam('id');
+		  const artwork = artworks.find(a => a.id_number === idNumber);
+		  const container = document.getElementById('artwork-container');
+	
+		  if (artwork) {
+			document.getElementById('title').innerHTML = `${artwork.object_name}`;
+			document.getElementById('inventory_number').innerHTML = `${artwork.inventory_number}`;
+			document.getElementById('type_of_object').innerHTML = `${artwork.type_of_object}`;
+			document.getElementById('material_technique').innerHTML = `${artwork.material_technique}`;
+			document.getElementById('dimensions').innerHTML = `${artwork.dimensions}`;
+			document.getElementById('description').innerHTML = `${artwork.description}`;
+			document.getElementById('artist_title').innerHTML = `${artwork.artist}`;
+			document.getElementById('artist_table').innerHTML = `${artwork.artist}`;
+			document.getElementById('pid').innerHTML = `${artwork.pid}`;
+		  } else {
+			document.getElementById('main').innerHTML = 
+			`<main>
+			<!-- pageNotFoundBlock -->
+			<article class="pageNotFoundBlock hdIsVii d-flex w-100 text-center">
+				<div class="lbAlignWrap d-flex align-items-center w-100">
+					<div class="container py-6">
+						<div class="row">
+							<div class="col-12 col-md-8 offset-md-2 col-xl-6 offset-xl-3">
+								<div class="extraWrap px-md-12">
+									<i class="icnWrap d-block mb-5">
+										<img src="assets/images/icn16.svg" width="72" height="73" alt="icon">
+									</i>
+									<h2 class="mb-3">Objekt nicht gefunden</h2>
+									<p class="mb-7">Es wurde kein Objekt mit der ID <strong>${idNumber}</strong> gefunden.</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</article>
+		</main>
+		`;
+		  }
+		}
+	
+		// Start loading
+		loadArtwork();
+	  </script>
+	
+</body>
+</html>
